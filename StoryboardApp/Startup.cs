@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StoryboardApp.Services;
 
 namespace StoryboardApp
 {
@@ -24,6 +25,8 @@ namespace StoryboardApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<EasyStoryboardingService>();
+            services.AddScoped<MediumStoryboardingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
