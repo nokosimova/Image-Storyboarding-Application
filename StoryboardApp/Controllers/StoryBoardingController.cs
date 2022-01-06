@@ -66,10 +66,39 @@ namespace StoryboardApp.Controllers
                     }
                 }
             };
+            
+            ImagesTreeModel tree3 = new ImagesTreeModel()
+            {
+                IsRow = true,
+                ChildTree = new List<ImagesTreeModel>()
+                {
+                    new ImagesTreeModel() {IsRow = false, ImageFile = Images[0]},
+                    new ImagesTreeModel()
+                    {
+                        IsRow = false, ChildTree = new List<ImagesTreeModel>()
+                        {
+                            new ImagesTreeModel() {IsRow = true, ImageFile = Images[1]},
+                            new ImagesTreeModel() {IsRow = true, ImageFile = Images[2]},
+                            new ImagesTreeModel()
+                            {
+                                IsRow = true, ChildTree = new List<ImagesTreeModel>()
+                                {
+                                    new ImagesTreeModel() {IsRow = false, ImageFile = Images[3]},
+                                    new ImagesTreeModel() {IsRow = false, ImageFile = Images[4]}
+                                }
+                            }
+                        }
+                    },
+                    new ImagesTreeModel() {IsRow = false, ImageFile = Images[5]}
+                }
+            };
             await _mediumService.MergeImage(tree2);
-            tree2.Image.Save("after_merge.jpg");
             var resultImage = _easyService.ScaleImageByHeight(tree2.Image, Height);
-            resultImage.Save("result_medium_storyboarding.jpg");
+            resultImage.Save("result_medium_storyboarding2.jpg");
+            
+            await _mediumService.MergeImage(tree3);
+            resultImage = _easyService.ScaleImageByHeight(tree3.Image, Height);
+            resultImage.Save("result_medium_storyboarding3.jpg");
         }
 
     }

@@ -119,7 +119,7 @@ namespace StoryboardApp.Services
             
             var newImage = new Bitmap(img.Width, img.Height);
             using Graphics g = Graphics.FromImage(newImage);
-            g.DrawImage(img, 0, 0, img.Width, img.Width);
+            g.DrawImage(img, 0, 0, img.Width, img.Height);
             return newImage;
         }
         
