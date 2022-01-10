@@ -6,12 +6,16 @@
 }
 
 <h2>Простая раскадровка</h2>
-<p class="display-4">Загрузи фото и укажи высоту</p>
+<p>Загрузите несколько фотографий и укажите высоту раскадровки</p>
 <form enctype="multipart/form-data" action="/StoryBoarding/SaveSimpleStoryboard" method="post">
-    <label for="" class="form-label">Выберите фотографию</label>
-    <input name="Images" type="file" multiple/>
-        
-    <label for="" class="form-label">Введите высоту в пискелях:</label>
-    <input type="number" name="Height"/>
-    <button>Кадрировать</button>    
+     <div class="form-group">
+        <label for="" class="form-label">Выберите фотографию</label>
+        <input name="Images" type="file" multiple/>
+     </div>
+    <div class="form-group">
+        <label for="" class="form-label">Введите высоту в пискелях:</label>
+        <input type="number" name="Height"/>    
+    </div>
+    
+    <button  type="submit" class="btn btn-primary" >Кадрировать</button>    
 </form>

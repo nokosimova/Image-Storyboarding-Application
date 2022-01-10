@@ -6,24 +6,32 @@
 }
 
 <h2>Раскадровка произвольного дерева изображений с дополнительными отступами</h2>
-<p class="display-4">Загрузи фото и укажи высоту</p>
+<p>Загрузи фото и укажи высоту</p>
 <form enctype="multipart/form-data" action="/StoryBoarding/SaveHardStoryboard" method="post">
-    <label for="" class="form-label">Выберите фотографию (4 штуки)</label>
-    <input name="Images" type="file" multiple/>
-        
-    <label for="" class="form-label">Введите высоту в пискелях:</label>
-    <input type="number" name="Height"/>
-    
-    <label for="" class="form-label">Отступ влево в пискелях:</label>
-    <input type="number" name="paddingLeft"/>
-    
-    <label for="" class="form-label">Отступ вправо в пискелях:</label>
-    <input type="number" name="paddingRight"/>
-    
-    <label for="" class="form-label">Верхний отступ в пискелях:</label>
-    <input type="number" name="paddingTop"/>
-    
-    <label for="" class="form-label">Нижний отступ в пискелях:</label>
-    <input type="number" name="paddingBottom"/>
-    <button>Кадрировать</button>    
+    <div class="form-group">
+        <label for="" class="form-label">Выберите фотографии (не меньше 6 штук)</label>
+        <input name="Images" type="file" multiple/>
+    </div>
+    <div class="form-group">
+        <label for="" class="form-label">Высота в пискелях ( не меньше 1200):</label>
+        <input type="number" name="Height" min="1200"/>
+    </div>
+    <div class="form-group">
+        <label for="" class="form-label">Отступ влево в пискелях:</label>
+        <input type="number" name="paddingLeft" max="50"/>
+    </div>
+    <div class="form-group">
+        <label for="" class="form-label">Отступ вправо в пискелях:</label>
+        <input type="number" name="paddingRight" max="50"/>
+    </div>
+    <div class="form-group">
+        <label for="" class="form-label">Верхний отступ в пискелях:</label>
+        <input type="number" name="paddingTop" max="50"/>
+    </div>
+    <div class="form-group">
+        <label for="" class="form-label">Нижний отступ в пискелях:</label>
+        <input type="number" name="paddingBottom" max="50"/>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Кадрировать</button>
 </form>

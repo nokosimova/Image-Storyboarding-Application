@@ -6,12 +6,16 @@
 }
 
 <h2>Раскадровка произвольного дерева изображений</h2>
-<p class="display-4">Загрузи фото и укажи высоту</p>
+<p>Загрузите фотографии, укажите высоту</p>
 <form enctype="multipart/form-data" action="/StoryBoarding/SaveMediumStoryboard" method="post">
-    <label for="" class="form-label">Выберите фотографию (4 штуки)</label>
-    <input name="Images" type="file" multiple/>
-        
-    <label for="" class="form-label">Введите высоту в пискелях:</label>
-    <input type="number" name="Height"/>
-    <button>Кадрировать</button>    
+
+    <div class="form-group">
+        <label for="" class="form-label">Выберите фотографии (не меньше 6 штук) </label>
+        <input name="Images" type="file" multiple/>
+    </div>
+    <div class="form-group">
+        <label for="" class="form-label">Введите высоту в пискелях:</label>
+        <input type="number" name="Height"/>
+    </div>
+        <button type="submit" class="btn btn-primary"> Кадрировать</button>
 </form>
