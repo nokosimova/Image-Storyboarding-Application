@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Http;
-
-namespace StoryboardApp.Models.DTOs
+namespace StoryboardApp.Models
 {
-    public class CreateHardStoryboardRequest
+    public class FrameParametersModel
     {
         public int newHeight { get; set; }
         public int newWidth { get; set; }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,54 +27,32 @@ namespace StoryboardApp.Controllers
 
 
         [HttpPost]
-        public async Task SaveSimpleStoryboard(StoryboardViewModel request)
+        public async Task<IActionResult> SaveSimpleStoryboard(StoryboardViewModel request)
         {
             if (request.Images == null || request.Images.Count == 0 || request.Height <= 0)
-                return;
-            var resultImage = await _easyService.SaveEasyStoryboard(request.Images, request.Height);
-            resultImage.Save("result_easy_storyboarding.jpg");
+                return BadRequest();
+            ImagesTreeModel tree = new ImagesTreeModel()
+            {
+                IsRow = true,
+                ImageFile = null,
+                ChildTree = new List<ImagesTreeModel>()
+            };
+            foreach (var image in request.Images)
+            {
+                tree.ChildTree.Add(new ImagesTreeModel()
+                {
+                    IsRow = false,
+                    ImageFile = image
+                });
+            }
+            await _easyService.SaveEasyStoryboard(tree, request.Height);
+            return File(tree.ConvertToByteArray(), "image/jpeg", "easy_storyboard_result.jpg");
         }
 
         [HttpPost]
-        public async Task SaveMediumStoryboard(StoryboardViewModel req)
+        public async Task<IActionResult> SaveMediumStoryboard(StoryboardViewModel req)
         {
-            // you should load at least 4 images:
-            ImagesTreeModel tree1 = new ImagesTreeModel()
-            {
-                IsRow = true,
-                ChildTree = new List<ImagesTreeModel>()
-                {
-                    new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[0]},
-                    new ImagesTreeModel()
-                    {
-                        IsRow = false, ChildTree = new List<ImagesTreeModel>()
-                        {
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[1]},
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[2]}
-                        }
-                    },
-                    new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[3]}
-                }
-            };
-            
-            ImagesTreeModel tree2 = new ImagesTreeModel()
-            {
-                IsRow = true,
-                ChildTree = new List<ImagesTreeModel>()
-                {
-                    new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[0]},
-                    new ImagesTreeModel()
-                    {
-                        IsRow = false, ChildTree = new List<ImagesTreeModel>()
-                        {
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[1]},
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[2]}
-                        }
-                    }
-                }
-            };
-            
-            ImagesTreeModel tree3 = new ImagesTreeModel()
+            ImagesTreeModel tree = new ImagesTreeModel()
             {
                 IsRow = true,
                 ChildTree = new List<ImagesTreeModel>()
@@ -98,19 +77,15 @@ namespace StoryboardApp.Controllers
                     new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[5]}
                 }
             };
-            await _mediumService.MergeImage(tree2);
-            var resultImage = _easyService.ScaleImageByHeight(tree2.Image, req.Height);
-            resultImage.Save("result_medium_storyboarding2.jpg");
             
-            await _mediumService.MergeImage(tree3);
-            resultImage = _easyService.ScaleImageByHeight(tree3.Image, req.Height);
-            resultImage.Save("result_medium_storyboarding3.jpg");
+            await _mediumService.SaveMediumStoryboard(tree, req.Width, req.Height); 
+            return File(tree.ConvertToByteArray(), "image/jpeg", "medium_storyboard_result.jpg");
         }
         
         [HttpPost]
-        public async Task SaveHardStoryboard(HardStoryboardViewModel req)
+        public async Task<IActionResult> SaveHardStoryboard(HardStoryboardViewModel req)
         {
-            CreateHardStoryboardRequest parameters = new CreateHardStoryboardRequest()
+            FrameParametersModel parameters = new FrameParametersModel()
             {
                 newHeight = req.Height,
                 paddingLeft = req.PaddingLeft,
@@ -118,43 +93,7 @@ namespace StoryboardApp.Controllers
                 paddingBottom = req.PaddingBottom,
                 paddingTop = req.PaddingTop
             };
-            // you should load at least 4 images
-            ImagesTreeModel tree1 = new ImagesTreeModel()
-            {
-                IsRow = true,
-                ChildTree = new List<ImagesTreeModel>()
-                {
-                    new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[0]},
-                    new ImagesTreeModel()
-                    {
-                        IsRow = false, ChildTree = new List<ImagesTreeModel>()
-                        {
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[1]},
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[2]}
-                        }
-                    },
-                    new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[3]}
-                }
-            };
-
-            ImagesTreeModel tree2 = new ImagesTreeModel()
-            {
-                IsRow = true,
-                ChildTree = new List<ImagesTreeModel>()
-                {
-                    new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[0]},
-                    new ImagesTreeModel()
-                    {
-                        IsRow = false, ChildTree = new List<ImagesTreeModel>()
-                        {
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[1]},
-                            new ImagesTreeModel() {IsRow = true, ImageFile = req.Images[2]}
-                        }
-                    }
-                }
-            };
-            
-            ImagesTreeModel tree3 = new ImagesTreeModel()
+            ImagesTreeModel tree = new ImagesTreeModel()
             {
                 IsRow = true,
                 ChildTree = new List<ImagesTreeModel>()
@@ -179,11 +118,8 @@ namespace StoryboardApp.Controllers
                     new ImagesTreeModel() {IsRow = false, ImageFile = req.Images[5]}
                 }
             };
-            //await _hardService.SaveHardStoryboard(parameters, tree1);
-            //await _hardService.SaveHardStoryboard(parameters, tree2);
-            await _hardService.SaveHardStoryboard(parameters, tree3);
-
+            await _hardService.SaveHardStoryboard(parameters, tree);
+            return File(tree.ConvertToByteArray(), "image/jpeg", "hard_storyboard_result.jpg");
         }
-
     }
 }

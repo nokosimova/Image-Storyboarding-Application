@@ -9,27 +9,11 @@ namespace StoryboardApp.Services
 {
     public class EasyStoryboardingService
     {
-        public async Task<Bitmap> SaveEasyStoryboard(List<IFormFile> Images, int newHeight)
+        public async Task SaveEasyStoryboard(ImagesTreeModel tree, int newHeight)
         {
-            ImagesTreeModel tree = new ImagesTreeModel()
-            {
-                IsRow = true,
-                ImageFile = null,
-                ChildTree = new List<ImagesTreeModel>()
-            };
-            foreach (var image in Images)
-            {
-                tree.ChildTree.Add(new ImagesTreeModel()
-                 {
-                     IsRow = false,
-                     ImageFile = image
-                 });
-            }
-
             await tree.ConvertFilesToImage();
             await tree.MergeImageTreeRow();
             tree.ScaleImage((decimal)newHeight / tree.Image.Height);
-            return tree.Image;
         }
         public Bitmap ScaleImageByHeight(Image image, int newHeight)
         {

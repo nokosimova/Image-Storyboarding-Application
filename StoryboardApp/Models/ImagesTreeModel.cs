@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace StoryboardApp.Models
 {
@@ -12,13 +13,11 @@ namespace StoryboardApp.Models
         public bool IsRow { get; set; }
         public IFormFile ImageFile { get; set; }
         public Bitmap Image { get; set; }
-        public Bitmap OriginalImage { get; set; }
         public List<ImagesTreeModel> ChildTree { get; set; } = null;
         
         //this method create primary image merging starting from inner images using recursion:
         public async Task PrimaryImageTreeMerge()
         {
-            ConvertFilesToImage();
             if (ChildTree != null && ChildTree.Any(x => x.ChildTree != null))
             {
                 foreach (var item in ChildTree)
@@ -97,26 +96,43 @@ namespace StoryboardApp.Models
 
         public async Task ConvertFilesToImage()
         {
-            if (ChildTree != null)
-                foreach (var item in ChildTree)
-                    item.ConvertFilesToImage();
-            if (ImageFile == null) return;
-            
-            using var stream = new MemoryStream();
-            ImageFile.CopyTo(stream);
-            using var fileImage = System.Drawing.Image.FromStream(stream);
-            var newImage = new Bitmap(fileImage.Width, fileImage.Height);
-            using var graphics = Graphics.FromImage(newImage);
-            graphics.DrawImage(fileImage, 0, 0, fileImage.Width, fileImage.Height);
-            this.Image = newImage;
-            OriginalImage = newImage;
+            if (ChildTree == null)
+            {                
+                if (ImageFile == null) return;
+                
+                using var stream = new MemoryStream();
+                ImageFile.CopyTo(stream);
+                using var fileImage = System.Drawing.Image.FromStream(stream);
+                var newImage = new Bitmap(fileImage.Width, fileImage.Height);
+                using var graphics = Graphics.FromImage(newImage);
+                graphics.DrawImage(fileImage, 0, 0, fileImage.Width, fileImage.Height);
+                this.Image = newImage;
+                return;
+            } 
+            foreach (var item in ChildTree) 
+                await item.ConvertFilesToImage();
+
         }
 
         public void ScaleImage(decimal similarityValue)
         {
+            if (similarityValue <= 0)
+                Image = new Bitmap(Image, new Size(
+                    (int) (1),
+                    (int) (1)));
+            else
             Image = new Bitmap(Image, new Size(
                 (int) (Image.Width * similarityValue),
                 (int) (Image.Height * similarityValue)));
+        }
+
+        public byte[] ConvertToByteArray()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            Image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+            byte[] bytes = memoryStream.ToArray();
+            memoryStream.Close();
+            return bytes;
         }
     }
 }

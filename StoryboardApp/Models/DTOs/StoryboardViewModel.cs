@@ -7,5 +7,6 @@ namespace StoryboardApp.Models.DTOs
     {
         public List<IFormFile> Images { get; set; }
         public int Height { get; set; }
+        public int Width { get; set; }
     }
 }
