@@ -27,6 +27,8 @@ namespace StoryboardApp
             services.AddControllersWithViews();
             services.AddScoped<EasyStoryboardingService>();
             services.AddScoped<MediumStoryboardingService>();
+            services.AddScoped<HardStoryboardingService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

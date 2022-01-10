@@ -10,6 +10,7 @@ namespace StoryboardApp.Services
 {
     public class MediumStoryboardingService
     {
+        
         public async Task MergeImage(ImagesTreeModel tree)
         {
             if (tree.ChildTree != null && tree.ChildTree.Any(x => x.ChildTree != null))
