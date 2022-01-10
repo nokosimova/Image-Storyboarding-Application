@@ -3,48 +3,33 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using StoryboardApp.Models;
 
 namespace StoryboardApp.Services
 {
     public class EasyStoryboardingService
     {
-        public async Task<Bitmap> SaveEasyStoryboard(List<IFormFile> Images, int Height)
+        public async Task<Bitmap> SaveEasyStoryboard(List<IFormFile> Images, int newHeight)
         {
-            int totalWidth = 0;
-            List<Bitmap> newImages = new List<Bitmap>();
+            ImagesTreeModel tree = new ImagesTreeModel()
+            {
+                IsRow = true,
+                ImageFile = null,
+                ChildTree = new List<ImagesTreeModel>()
+            };
             foreach (var image in Images)
             {
-                using (var stream = new MemoryStream())
-                {
-                    await image.CopyToAsync(stream);
-                    using (var img = System.Drawing.Image.FromStream(stream))
-                    {
-                        Bitmap newImage = ScaleImageByHeight(img, Height);
-                        totalWidth += newImage.Width;
-                        newImages.Add(newImage);
-                    }
-                }
+                tree.ChildTree.Add(new ImagesTreeModel()
+                 {
+                     IsRow = false,
+                     ImageFile = image
+                 });
             }
-            
-            //create a bitmap to hold the combined image
-            Bitmap finalImage = new System.Drawing.Bitmap(totalWidth, Height);
 
-            //get a graphics object from the image so we can draw on it
-            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(finalImage))
-            {
-                //set background color
-                g.Clear(System.Drawing.Color.Black);
-
-                //go through each image and draw it on the final image
-                int offset = 0;
-                foreach (System.Drawing.Bitmap image in newImages)
-                {
-                    g.DrawImage(image,
-                        new System.Drawing.Rectangle(offset, 0, image.Width, image.Height));
-                    offset += image.Width;
-                }
-            }
-            return finalImage;
+            await tree.ConvertFilesToImage();
+            await tree.MergeImageTreeRow();
+            tree.ScaleImage((decimal)newHeight / tree.Image.Height);
+            return tree.Image;
         }
         public Bitmap ScaleImageByHeight(Image image, int newHeight)
         {

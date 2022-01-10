@@ -18,7 +18,7 @@ namespace StoryboardApp.Models
         //this method create primary image merging starting from inner images using recursion:
         public async Task PrimaryImageTreeMerge()
         {
-            ConvertFileToImage();
+            ConvertFilesToImage();
             if (ChildTree != null && ChildTree.Any(x => x.ChildTree != null))
             {
                 foreach (var item in ChildTree)
@@ -95,11 +95,11 @@ namespace StoryboardApp.Models
             Image = new Bitmap(Image, new Size(newWidth, newHeight));
         }
 
-        private void ConvertFileToImage()
+        public async Task ConvertFilesToImage()
         {
             if (ChildTree != null)
                 foreach (var item in ChildTree)
-                    item.ConvertFileToImage();
+                    item.ConvertFilesToImage();
             if (ImageFile == null) return;
             
             using var stream = new MemoryStream();
@@ -111,6 +111,12 @@ namespace StoryboardApp.Models
             this.Image = newImage;
             OriginalImage = newImage;
         }
-        
+
+        public void ScaleImage(decimal similarityValue)
+        {
+            Image = new Bitmap(Image, new Size(
+                (int) (Image.Width * similarityValue),
+                (int) (Image.Height * similarityValue)));
+        }
     }
 }
