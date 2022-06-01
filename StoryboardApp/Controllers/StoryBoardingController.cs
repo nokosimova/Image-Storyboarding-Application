@@ -48,7 +48,7 @@ namespace StoryboardApp.Controllers
             await _easyService.SaveEasyStoryboard(tree, request.Height);
             return File(tree.ConvertToByteArray(), "image/jpeg", "easy_storyboard_result.jpg");
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> SaveMediumStoryboard(StoryboardViewModel req)
         {
@@ -121,5 +121,29 @@ namespace StoryboardApp.Controllers
             await _hardService.SaveHardStoryboard(parameters, tree);
             return File(tree.ConvertToByteArray(), "image/jpeg", "hard_storyboard_result.jpg");
         }
+
+
+                ///new methods
+        [HttpGet]
+
+        public async Task<IActionResult> CreateSimpleStoryboard(ImageTreeViewModel tree, BaseSizesViewModel size)
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> CreateMediumStoryboard(ImageTreeViewModel tree, BaseSizesViewModel size)
+        {
+            return Ok();
+        }
+        
+        [HttpGet]
+
+        public async Task<IActionResult> CreateHardStoryboard(ImageTreeViewModel tree, FrameSizesViewModel size)
+        {
+            return Ok();
+        }
+        
     }
 }
